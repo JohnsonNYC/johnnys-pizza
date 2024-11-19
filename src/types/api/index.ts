@@ -1,6 +1,5 @@
 /**
  * Pizza API Documentation
- * Base URL: https://api.sparrowtest.com/v2/lmd/hiring/frontend/take-home
  */
 
 import {
