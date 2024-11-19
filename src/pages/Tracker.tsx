@@ -4,7 +4,12 @@ import Footer from "../components/Footer";
 import styled from "styled-components";
 import Text from "../components/Text";
 
-import { HiringFrontendTakeHomeOrderResponse } from "../types";
+import {
+  HiringFrontendTakeHomeOrderResponse,
+  HiringFrontendTakeHomeOrderStatus,
+} from "../types";
+import { handleUpdateStatus } from "../services/updateOrder";
+
 const BASE = import.meta.env.VITE_BASE_URL;
 
 /**
@@ -20,6 +25,9 @@ const Tracker = () => {
   const [foundOrder, setFoundOrder] =
     useState<HiringFrontendTakeHomeOrderResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const { status, customer } = foundOrder || {};
+  const { city, state, street, zipCode } = customer?.deliveryAddress || {};
 
   const searchForOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,8 +47,15 @@ const Tracker = () => {
     }
   };
 
-  const { status, customer } = foundOrder || {};
-  const { city, state, street, zipCode } = customer?.deliveryAddress || {};
+  const cancelOrder = async () => {
+    if (!foundOrder) return;
+    const order = await handleUpdateStatus(
+      HiringFrontendTakeHomeOrderStatus.Cancelled,
+      foundOrder.id
+    );
+    console.log("Should have updated Order: ", { order });
+    if (order) setFoundOrder(order);
+  };
 
   useEffect(() => {
     if (error) {
@@ -90,12 +105,17 @@ const Tracker = () => {
 
               <div>
                 <Text weight="bold" type="div">
-                  Status: <Text>{status}</Text>
+                  Status:{" "}
+                  <Text color={status == "cancelled" ? "red" : "black"}>
+                    {status}
+                  </Text>
                 </Text>
               </div>
             </div>
 
-            <CancelButton>Cancel Order</CancelButton>
+            {status === "pending" ? (
+              <CancelButton onClick={cancelOrder}>Cancel Order</CancelButton>
+            ) : null}
           </>
         ) : null}
         {error ? (
@@ -140,4 +160,5 @@ const CancelButton = styled.button`
   size: 20px;
   padding: 0.5rem 1rem;
   margin-top: 2rem;
+  cursor: pointer;
 `;

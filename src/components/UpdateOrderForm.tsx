@@ -6,8 +6,9 @@ import {
   HiringFrontendTakeHomeOrderResponse,
   HiringFrontendTakeHomeOrderStatus,
 } from "../types";
+import { handleUpdateStatus } from "../services/updateOrder";
 
-const BASE = import.meta.env.VITE_BASE_URL;
+// const BASE = import.meta.env.VITE_BASE_URL;
 
 interface UpdateOrderFormProp {
   order: HiringFrontendTakeHomeOrderResponse | null;
@@ -18,29 +19,16 @@ const UpdateOrderForm: React.FC<UpdateOrderFormProp> = ({ order }) => {
 
   const { creditCardNumber, customer, items, paymentMethod } =
     currentOrderItem || {};
-  const handleUpdateStatus = async (
+
+  const updateStatus = async (
     status: HiringFrontendTakeHomeOrderStatus,
     orderId: string
   ) => {
     if (!currentOrderItem || status == currentOrderItem.status) return;
-
-    try {
-      const response = await fetch(`${BASE}/pizza/status`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId, status }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setCurrentOrderItem(data.order);
-    } catch (error) {
-      console.log("HTTP ERROR: ", error);
-    }
+    const order = await handleUpdateStatus(status, orderId);
+    if (order) setCurrentOrderItem(order);
   };
+
   const { street, city, state, zipCode } = customer?.deliveryAddress || {};
   const lastFourCC = creditCardNumber?.slice(-4);
 
@@ -89,7 +77,7 @@ const UpdateOrderForm: React.FC<UpdateOrderFormProp> = ({ order }) => {
               key={`status_${status}`}
               active={status == currentOrderItem.status}
               option={status}
-              onClick={() => handleUpdateStatus(status, currentOrderItem.id)}
+              onClick={() => updateStatus(status, currentOrderItem.id)}
             >
               <Text
                 font="poppins"
