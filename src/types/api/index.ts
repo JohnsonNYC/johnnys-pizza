@@ -32,7 +32,7 @@ export interface GetPizzaPricingResponse {
  * GET /specialty-pizzas
  * Retrieves the list of specialty pizzas
  */
-type GetAllSpecialtyPizzasRequest = () => Promise<{
+export type GetAllSpecialtyPizzasRequest = () => Promise<{
   specialtyPizzas: SpecialtyPizza[];
 }>;
 
@@ -40,13 +40,13 @@ type GetAllSpecialtyPizzasRequest = () => Promise<{
  * GET /pizza-pricing
  * Retrieves pizza pricing information
  */
-type GetPizzaPricingRequest = () => Promise<GetPizzaPricingResponse>;
+export type GetPizzaPricingRequest = () => Promise<GetPizzaPricingResponse>;
 
 /**
  * POST /pizza
  * Creates a new order in the Checkout view
  */
-type CreatePizzaOrderRequest = (
+export type CreatePizzaOrderRequest = (
   order: HiringFrontendTakeHomeOrderRequest
 ) => Promise<{
   order: HiringFrontendTakeHomeOrderRequest;
@@ -56,7 +56,7 @@ type CreatePizzaOrderRequest = (
  * GET /pizzas
  * Retrieves all orders for a specific location in the Pizza Orders Table view
  */
-type GetAllOrdersRequest = (locationId: string) => Promise<{
+export type GetAllOrdersRequest = (locationId: string) => Promise<{
   orders: HiringFrontendTakeHomeOrderResponse[];
 }>;
 
@@ -64,7 +64,7 @@ type GetAllOrdersRequest = (locationId: string) => Promise<{
  * GET /pizza
  * Retrieves customer's order details by orderId for the Check on your order view
  */
-type GetPizzaOrderByIdRequest = (orderId: string) => Promise<{
+export type GetPizzaOrderByIdRequest = (orderId: string) => Promise<{
   order: HiringFrontendTakeHomeOrderRequest;
 }>;
 
@@ -72,7 +72,7 @@ type GetPizzaOrderByIdRequest = (orderId: string) => Promise<{
  * PUT /pizza/status
  * Updates the order status by the restaurant
  */
-type UpdatePizzaOrderStatusRequest = (
+export type UpdatePizzaOrderStatusRequest = (
   orderId: string,
   status: HiringFrontendTakeHomeOrderStatus
 ) => Promise<{
@@ -84,6 +84,6 @@ type UpdatePizzaOrderStatusRequest = (
  * Cancels an order by the customer
  * Note: Only orders with status "pending" can be cancelled
  */
-type CancelPizzaOrderRequest = (orderId: string) => Promise<{
+export type CancelPizzaOrderRequest = (orderId: string) => Promise<{
   order: HiringFrontendTakeHomeOrderResponse;
 }>;
