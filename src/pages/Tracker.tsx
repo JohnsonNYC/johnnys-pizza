@@ -12,14 +12,6 @@ import { handleUpdateStatus } from "../services/updateOrder";
 
 const BASE = import.meta.env.VITE_BASE_URL;
 
-/**
- * GET /pizza
- * Retrieves customer's order details by orderId for the Check on your order view
- */
-// export type GetPizzaOrderByIdRequest = (orderId: string) => Promise<{
-//   order: HiringFrontendTakeHomeOrderRequest;
-// }>;
-
 const Tracker = () => {
   const [orderNumberInput, setOrderNumberInput] = useState<string>("");
   const [foundOrder, setFoundOrder] =
@@ -53,7 +45,7 @@ const Tracker = () => {
       HiringFrontendTakeHomeOrderStatus.Cancelled,
       foundOrder.id
     );
-    console.log("Should have updated Order: ", { order });
+
     if (order) setFoundOrder(order);
   };
 

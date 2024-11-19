@@ -87,7 +87,7 @@ const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
       }
 
       const data = await response.json();
-      setOrderConfirmationData(data);
+      if (data) setOrderConfirmationData(data.order);
     } catch (error) {
       console.error("Error:", error);
     }

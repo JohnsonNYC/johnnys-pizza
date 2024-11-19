@@ -34,7 +34,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const updateItemQuantity = (index: number, quantity: number) => {
     setCart((prevCart) =>
-      prevCart.map((item, i) => (i === index ? { ...item, quantity } : item))
+      prevCart.map(({ id, pizza }, i) => {
+        return i === index
+          ? { id, pizza: { ...pizza, quantity } }
+          : { id, pizza };
+      })
     );
   };
 

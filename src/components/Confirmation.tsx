@@ -20,8 +20,6 @@ const Confirmation: React.FC<ConfirmationProps> = ({
     customer,
     estimatedDeliveryTime,
     items,
-    // paymentMethod,
-    // status,
     totalAmount,
     type,
   } = orderConfirmationData || {};
@@ -32,7 +30,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({
   const lastFour = creditCardNumber?.toString().slice(-4) || "0000";
 
   const formattedDeliveryTime = estimatedDeliveryTime
-    ? formatDate(new Date(estimatedDeliveryTime * 1000), "MM dd hh:mm a")
+    ? formatDate(new Date(estimatedDeliveryTime * 1000), "MMM, do hh:mm a")
     : "We will call for updates";
 
   useEffect(() => {
@@ -46,14 +44,24 @@ const Confirmation: React.FC<ConfirmationProps> = ({
 
   if (!orderConfirmationData) return null;
 
+  console.log({ orderConfirmationData });
+
   return (
     <Container>
       <div>
         <Text type="div" font="gothic" size="25px">
           Confirmation
         </Text>
-        <Text>Order Number: {id}</Text>
-        <Text> Estimated Arrival: {formattedDeliveryTime} </Text>
+        <Text weight="bold" type="div">
+          Order Number:
+        </Text>
+
+        <Text size="14px">{id}</Text>
+
+        <Text type="div" weight="bold">
+          {" "}
+          Estimated Arrival: {formattedDeliveryTime}{" "}
+        </Text>
 
         {items?.length
           ? items.map(({ id, pizza }) => (
@@ -83,7 +91,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({
           <Text type="div" weight="bold">
             Order Total
           </Text>
-          <Text type="div">${totalAmount.toFixed(2)}</Text>
+          <Text type="div">${totalAmount}</Text>
         </PurchaseBreakdown>
 
         <Text font="gothic">Payment Method</Text>

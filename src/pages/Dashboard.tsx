@@ -84,8 +84,12 @@ const Dashboard = () => {
                   </td>
                   <td>
                     <Text font="poppins">
-                      {formatDate(order.createdAt, "LLL do")} at{" "}
-                      {formatDate(order.createdAt, "hh:mm aaaa")}
+                      {formatDate(new Date(order.createdAt * 1000), "LLL do")}{" "}
+                      at{" "}
+                      {formatDate(
+                        new Date(order.createdAt * 1000),
+                        "hh:mm aaaa"
+                      )}
                     </Text>
                   </td>
                   <td>

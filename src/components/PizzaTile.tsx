@@ -21,13 +21,13 @@ const PizzaTile = ({
 
   const handleQuantity = (type: string) => {
     let newQuantity: number = quantity;
-
     if (type == "add") {
       newQuantity++;
     } else {
       if (newQuantity == 1) return;
       newQuantity--;
     }
+
     updateItemQuantity(index, newQuantity);
   };
 
