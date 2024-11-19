@@ -41,8 +41,6 @@ export const PaymentProvider = ({ children }: { children: ReactNode }) => {
   const [order, setOrder] = useState<OrderState>(defaultOrderState);
   const [user, setUser] = useState<Customer>(defaultUserState);
 
-  console.log({ order, user });
-
   const updateUserDetails = (details: Partial<Customer>) => {
     setUser((prevUser) => ({
       ...prevUser,

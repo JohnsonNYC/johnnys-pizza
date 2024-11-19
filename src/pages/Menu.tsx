@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Text from "../components/Text";
@@ -7,6 +7,7 @@ import CustomCard from "../components/CustomCard";
 import Modal from "../components/Modal";
 import PizzaForm from "../components/PizzaForm";
 import SelectionPill from "../components/SelectionPill";
+import { MenuDataContext } from "../context/MenuContext";
 
 import styled from "styled-components";
 import { SpecialtyPizza } from "../types";
@@ -16,21 +17,24 @@ import { GetPizzaPricingResponse } from "../types/api";
 const BASE = import.meta.env.VITE_BASE_URL;
 
 const Menu = () => {
-  const [specialtyPizzas, setSpecialtyPizzas] = useState<SpecialtyPizza[]>([]);
+  const menuDataContext = useContext(MenuDataContext);
+  const { menuData, setMenuData } = menuDataContext;
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [filterBy, setFilterBy] = useState<string>("all");
   const [selectedPizza, setSelectedPizza] = useState<SpecialtyPizza | null>(
     null
   );
+
   const [pricingInformation, setPricingInformation] =
     useState<GetPizzaPricingResponse>();
 
   const SPECIALTY_PIZZA = useMemo(() => {
     if (filterBy != "all") {
-      return specialtyPizzas.filter((pizza) => pizza.group === filterBy);
+      return menuData.filter((pizza) => pizza.group === filterBy);
     }
-    return specialtyPizzas;
-  }, [specialtyPizzas, filterBy]);
+    return menuData;
+  }, [menuData, filterBy]);
 
   const filterPizzasByGroup = (group: string) => {
     if (filterBy === group) setFilterBy("all");
@@ -41,7 +45,7 @@ const Menu = () => {
     if (pizzaId === "custom") {
       setSelectedPizza(null);
     } else {
-      const foundPizza = specialtyPizzas.find((el) => el.id == pizzaId);
+      const foundPizza = menuData.find((el) => el.id == pizzaId);
       if (foundPizza) setSelectedPizza(foundPizza);
     }
     setIsModalOpen(true);
@@ -53,7 +57,7 @@ const Menu = () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      if (data.specialtyPizzas) setSpecialtyPizzas(data.specialtyPizzas);
+      if (data.specialtyPizzas) setMenuData(data.specialtyPizzas);
     } catch (error) {
       console.error("Error fetching specialty pizzas:", error);
     }
@@ -72,7 +76,7 @@ const Menu = () => {
   };
 
   useEffect(() => {
-    if (specialtyPizzas.length === 0) {
+    if (menuData.length === 0) {
       getSpecialtyPizzas();
       getSpecialtyPricing();
     }
@@ -82,6 +86,13 @@ const Menu = () => {
     <>
       <Header />
       <Main>
+        <Text className="pizza-title" font="gothic" size="36px">
+          Custom Pie
+        </Text>
+        <Grid>
+          <CustomCard handleClick={openCard} />
+        </Grid>
+
         <Text className="pizza-title" font="gothic" size="36px">
           Specialty Pies
         </Text>
@@ -101,6 +112,7 @@ const Menu = () => {
             )
           )}
         </TabsContainer>
+
         <Grid>
           {SPECIALTY_PIZZA.map((data) => (
             <Card
@@ -109,13 +121,6 @@ const Menu = () => {
               handleClick={openCard}
             />
           ))}
-        </Grid>
-
-        <Text className="pizza-title" font="gothic" size="36px">
-          Custom Pie
-        </Text>
-        <Grid>
-          <CustomCard handleClick={openCard} />
         </Grid>
 
         <Modal

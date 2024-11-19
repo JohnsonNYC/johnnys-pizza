@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import Text from "./Text";
 import styled from "styled-components";
 
@@ -16,7 +16,10 @@ import {
   HiringFrontendTakeHomeOrderType,
   HiringFrontendTakeHomeOrderRequest,
   HiringFrontendTakeHomePaymentMethod,
+  HiringFrontendTakeHomeOrderResponse,
 } from "../types";
+
+import { fixNumber } from "../utils/numbers";
 
 const BASE = import.meta.env.VITE_BASE_URL;
 
@@ -25,19 +28,10 @@ interface OrderSummaryProps {
   paymentMethod: HiringFrontendTakeHomePaymentMethod;
 }
 
-// export type HiringFrontendTakeHomeOrderRequest = {
-//   //IMPORTANT: unique identifier for this pizza location (and your test)
-//   locationId: string;
-//   items: OrderItem[];
-//   customer: Customer;
-//   totalAmount: number;
-//   paymentMethod: HiringFrontendTakeHomePaymentMethod;
-//   creditCardNumber?: string;
-//   type: HiringFrontendTakeHomeOrderType;
-// };
-
 const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
   const [confirmationModal, setConfirmationModal] = useState(false);
+  const [orderConfirmationData, setOrderConfirmationData] =
+    useState<HiringFrontendTakeHomeOrderResponse | null>(null);
 
   const paymentContext = useContext(PaymentContext);
   const { user, order } = paymentContext || {};
@@ -64,7 +58,7 @@ const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
         email: user?.email || "",
         phoneNumber: user?.phoneNumber || "",
       },
-      totalAmount: orderTotal,
+      totalAmount: fixNumber(orderTotal, 2),
       creditCardNumber: cardNumber,
       paymentMethod: paymentMethod,
       type: order?.method as HiringFrontendTakeHomeOrderType,
@@ -93,12 +87,10 @@ const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
       }
 
       const data = await response.json();
-      console.log("Success:", data);
+      setOrderConfirmationData(data);
     } catch (error) {
       console.error("Error:", error);
     }
-
-    setConfirmationModal(true);
   };
 
   const isSubmitable = Boolean(
@@ -114,6 +106,12 @@ const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
           user?.deliveryAddress?.state.length &&
           user?.deliveryAddress?.zipCode.length))
   );
+
+  useEffect(() => {
+    if (orderConfirmationData) {
+      setConfirmationModal(true);
+    }
+  }, [orderConfirmationData]);
 
   return (
     <Container>
@@ -157,7 +155,7 @@ const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
         </Text>
       </ItemizedContainer>
 
-      <Button onClick={submitPizzaOrder} disabled={isSubmitable}>
+      <Button onClick={submitPizzaOrder} disabled={!isSubmitable}>
         <Text color="white" font="poppins" size="20px" weight="bold">
           Place Order ${orderTotal.toFixed(2)}
         </Text>
@@ -168,16 +166,9 @@ const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
         onClose={() => setConfirmationModal(false)}
         wrapperId="modal-root"
       >
-        <Confirmation
-          items={cart}
-          deliveryAddress={user?.deliveryAddress}
-          orderMethod={order?.method as HiringFrontendTakeHomeOrderType}
-          orderTotal={orderTotal}
-          subTotal={subTotal}
-          estimatedTax={estimatedTax}
-          tipTotal={tipTotal}
-          cardNumber={cardNumber}
-        />
+        {orderConfirmationData && (
+          <Confirmation orderConfirmationData={orderConfirmationData} />
+        )}
       </Modal>
     </Container>
   );

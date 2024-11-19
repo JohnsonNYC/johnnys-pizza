@@ -3,35 +3,37 @@ import styled from "styled-components";
 import Text from "./Text";
 import PizzaRow from "./PizzaRow";
 import JSConfetti from "js-confetti";
-import { Pizza, HiringFrontendTakeHomeOrderType } from "../types";
+import { formatDate } from "date-fns";
+
+import { HiringFrontendTakeHomeOrderResponse } from "../types";
 
 interface ConfirmationProps {
-  items: { id: string; pizza: Pizza }[];
-  deliveryAddress?: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-  orderMethod: HiringFrontendTakeHomeOrderType;
-  orderTotal: number;
-  subTotal: number;
-  estimatedTax: number;
-  tipTotal: number;
-  cardNumber: string;
+  orderConfirmationData: HiringFrontendTakeHomeOrderResponse;
 }
 
 const Confirmation: React.FC<ConfirmationProps> = ({
-  items,
-  deliveryAddress,
-  orderTotal,
-  orderMethod,
-  subTotal,
-  estimatedTax,
-  tipTotal,
-  cardNumber,
+  orderConfirmationData,
 }) => {
+  const {
+    id,
+    creditCardNumber,
+    customer,
+    estimatedDeliveryTime,
+    items,
+    // paymentMethod,
+    // status,
+    totalAmount,
+    type,
+  } = orderConfirmationData || {};
+
+  const { deliveryAddress } = customer || {};
   const { street, city, state, zipCode } = deliveryAddress || {};
+
+  const lastFour = creditCardNumber?.toString().slice(-4) || "0000";
+
+  const formattedDeliveryTime = estimatedDeliveryTime
+    ? formatDate(new Date(estimatedDeliveryTime * 1000), "MM dd hh:mm a")
+    : "We will call for updates";
 
   useEffect(() => {
     const jsConfetti = new JSConfetti();
@@ -42,7 +44,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({
     }, 3000);
   });
 
-  const lastFour = cardNumber.toString().slice(-4);
+  if (!orderConfirmationData) return null;
 
   return (
     <Container>
@@ -50,47 +52,38 @@ const Confirmation: React.FC<ConfirmationProps> = ({
         <Text type="div" font="gothic" size="25px">
           Confirmation
         </Text>
-        <Text>Order Number: 123456789</Text>
+        <Text>Order Number: {id}</Text>
+        <Text> Estimated Arrival: {formattedDeliveryTime} </Text>
 
-        {items.map(({ id, pizza }) => (
-          <PizzaRow key={`pizza_${id}`} pizza={pizza} />
-        ))}
+        {items?.length
+          ? items.map(({ id, pizza }) => (
+              <PizzaRow key={`pizza_${id}`} pizza={pizza} />
+            ))
+          : null}
       </div>
 
       <ConfirmationSummary>
-        <Text font="gothic">
-          {orderMethod === "delivery" ? "Deliver To" : "Pick Up At"}
-        </Text>
-
-        {orderMethod == "delivery" && street && city && state && zipCode ? (
+        {type == "delivery" ? (
           <>
+            <Text font="gothic">Delivery</Text>
             <Text type="div">{street}</Text>
             <Text type="div">
               {city}, {state}, {zipCode}
             </Text>
           </>
         ) : (
-          <Text> 1234 Hipster Avenue, Brooklyn, NY</Text>
+          <>
+            <Text font="gothic">Pick Up</Text>
+            <Text> 1234 Hipster Avenue, Brooklyn, NY</Text>
+          </>
         )}
 
         <Text font="gothic">Order Summary </Text>
         <PurchaseBreakdown>
-          <Text type="div">Subtotal</Text>
-          <Text type="div">${subTotal.toFixed(2)}</Text>
-        </PurchaseBreakdown>
-        <PurchaseBreakdown>
-          <Text type="div">Sales Tax</Text>
-          <Text type="div">${estimatedTax.toFixed(2)}</Text>
-        </PurchaseBreakdown>
-        <PurchaseBreakdown>
-          <Text type="div">Tip</Text>
-          <Text type="div">${tipTotal.toFixed(2)}</Text>
-        </PurchaseBreakdown>
-        <PurchaseBreakdown>
           <Text type="div" weight="bold">
             Order Total
           </Text>
-          <Text type="div">${orderTotal.toFixed(2)}</Text>
+          <Text type="div">${totalAmount.toFixed(2)}</Text>
         </PurchaseBreakdown>
 
         <Text font="gothic">Payment Method</Text>

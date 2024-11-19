@@ -1,26 +1,80 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Text from "./Text";
 import SelectionPill from "./SelectionPill";
+import {
+  HiringFrontendTakeHomeOrderResponse,
+  HiringFrontendTakeHomeOrderStatus,
+} from "../types";
 
-const UpdateOrderForm = () => {
+const BASE = import.meta.env.VITE_BASE_URL;
+
+interface UpdateOrderFormProp {
+  order: HiringFrontendTakeHomeOrderResponse | null;
+}
+const UpdateOrderForm: React.FC<UpdateOrderFormProp> = ({ order }) => {
+  const [currentOrderItem, setCurrentOrderItem] =
+    useState<HiringFrontendTakeHomeOrderResponse | null>(null);
+
+  const { creditCardNumber, customer, items, paymentMethod } =
+    currentOrderItem || {};
+  const handleUpdateStatus = async (
+    status: HiringFrontendTakeHomeOrderStatus,
+    orderId: string
+  ) => {
+    if (!currentOrderItem || status == currentOrderItem.status) return;
+
+    try {
+      const response = await fetch(`${BASE}/pizza/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, status }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setCurrentOrderItem(data.order);
+    } catch (error) {
+      console.log("HTTP ERROR: ", error);
+    }
+  };
+  const { street, city, state, zipCode } = customer?.deliveryAddress || {};
+  const lastFourCC = creditCardNumber?.slice(-4);
+
+  useEffect(() => {
+    if (!order) return;
+    setCurrentOrderItem(order);
+  }, [order]);
+
+  if (!currentOrderItem) return null;
   return (
     <Container>
-      <Text font="poppins" size="20px" weight="bold">
-        ORDER: #1234
+      <Text font="poppins" weight="bold" size="12px">
+        ORDER: #{currentOrderItem.id}
       </Text>
       <UserDetails>
         <div>
           <Text type="div" font="poppins" size="14px">
-            Johnson Kow
+            {customer?.firstName} {customer?.lastName}
           </Text>
-          <Text type="div" font="poppins" size="14px">
-            8277 116th street, Richmond Hill, NY, 11418
-          </Text>
+          {currentOrderItem.type == "delivery" && customer?.deliveryAddress ? (
+            <>
+              <Text type="div">{street}</Text>
+              <Text type="div">
+                {city}, {state}, {zipCode}
+              </Text>
+            </>
+          ) : null}
         </div>
 
         <div>
           <Text font="poppins" size="14px">
-            Payment: Card Ending in 1234 OR CASH
+            {paymentMethod == "credit_card"
+              ? `Payment: Card Ending in ${lastFourCC}`
+              : `Will pay in Cash`}
           </Text>
         </div>
       </UserDetails>
@@ -29,110 +83,63 @@ const UpdateOrderForm = () => {
         Status
       </Text>
       <StatusContainer>
-        <SelectionPill
-          active={false}
-          option={"received"}
-          onClick={() => console.log("HELLO THERE")}
-        >
-          <Text font="poppins" size="16px" weight="bold">
-            Order Receieved
-          </Text>
-        </SelectionPill>
+        {Object.values(HiringFrontendTakeHomeOrderStatus).map((status) => {
+          return (
+            <SelectionPill
+              key={`status_${status}`}
+              active={status == currentOrderItem.status}
+              option={status}
+              onClick={() => handleUpdateStatus(status, currentOrderItem.id)}
+            >
+              <Text
+                font="poppins"
+                size="16px"
+                weight="bold"
+                color={status == currentOrderItem.status ? "white" : "black"}
+              >
+                {status}
+              </Text>
+            </SelectionPill>
+          );
+        })}
       </StatusContainer>
 
       <ItemsContainer>
-        <PizzaItem>
-          <div
-            style={{ border: "1px solid red", width: "100px", height: "100px" }}
-          />
-          <IngredientsList>
-            <Text font="gothic" size="20px">
-              Pizza Name
-            </Text>
-            <Text size="16px" font="gothic">
-              Quantity:{" "}
-              <Text size="16px" font="poppins">
-                1
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Size:{" "}
-              <Text size="16px" font="poppins">
-                Small
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Cheese:{" "}
-              <Text size="16px" font="poppins">
-                Extra
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Sauce:{" "}
-              <Text size="16px" font="poppins">
-                Tomato
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Meat:{" "}
-              <Text size="16px" font="poppins">
-                Chicken,Parm
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Veggies:{" "}
-              <Text size="16px" font="poppins">
-                Mushroom, Onions, Jalapenos
-              </Text>
-            </Text>
-          </IngredientsList>
-        </PizzaItem>
-        <PizzaItem>
-          <div
-            style={{ border: "1px solid red", width: "100px", height: "100px" }}
-          />
-          <IngredientsList>
-            <Text font="gothic" size="20px">
-              Pizza Name
-            </Text>
-            <Text size="16px" font="gothic">
-              Quantity:{" "}
-              <Text size="16px" font="poppins">
-                1
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Size:{" "}
-              <Text size="16px" font="poppins">
-                Small
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Cheese:{" "}
-              <Text size="16px" font="poppins">
-                Extra
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Sauce:{" "}
-              <Text size="16px" font="poppins">
-                Tomato
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Meat:{" "}
-              <Text size="16px" font="poppins">
-                Chicken,Parm
-              </Text>
-            </Text>
-            <Text size="16px" font="gothic">
-              Veggies:{" "}
-              <Text size="16px" font="poppins">
-                Mushroom, Onions, Jalapenos
-              </Text>
-            </Text>
-          </IngredientsList>
-        </PizzaItem>
+        {items?.length &&
+          items?.map(({ id, pizza }) => (
+            <PizzaItem key={id}>
+              <IngredientsList>
+                <Text font="gothic" size="20px">
+                  {pizza.name}
+                </Text>
+                <Text size="16px" font="gothic">
+                  Quantity:{" "}
+                  <Text size="16px" font="poppins">
+                    1
+                  </Text>
+                </Text>
+
+                <Text size="16px" font="gothic">
+                  Size:{" "}
+                  <Text size="16px" font="poppins">
+                    {pizza.size}
+                  </Text>
+                </Text>
+                <Text size="16px" font="gothic">
+                  Cheese:{" "}
+                  <Text size="16px" font="poppins">
+                    Extra
+                  </Text>
+                </Text>
+                <Text size="16px" font="gothic">
+                  Sauce:{" "}
+                  <Text size="16px" font="poppins">
+                    Tomato
+                  </Text>
+                </Text>
+              </IngredientsList>
+            </PizzaItem>
+          ))}
       </ItemsContainer>
     </Container>
   );
@@ -145,7 +152,7 @@ const Container = styled.div``;
 const UserDetails = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin: 2rem 0;
 `;
 
 const StatusContainer = styled.div`
@@ -157,9 +164,7 @@ const StatusContainer = styled.div`
   margin-bottom: 1rem;
 `;
 
-const ItemsContainer = styled.div`
-  border: 1px solid red;
-`;
+const ItemsContainer = styled.div``;
 
 const PizzaItem = styled.div`
   display: flex;

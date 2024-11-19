@@ -14,6 +14,7 @@ const defaultCartContext: CartContextType = {
   removeFromCart: () => {},
   updateItemQuantity: () => {},
 };
+
 export const CartContext = createContext<CartContextType>(defaultCartContext);
 
 interface CartProviderProps {

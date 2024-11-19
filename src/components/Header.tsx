@@ -73,6 +73,11 @@ const Header: React.FC = () => {
               <Text size="24px">Tracker</Text>
             </Link>
           </li>
+          <li>
+            <Link to="/dashboard">
+              <Text size="24px">Dashboard</Text>
+            </Link>
+          </li>
         </ULContainer>
       )}
     </HeaderContainer>

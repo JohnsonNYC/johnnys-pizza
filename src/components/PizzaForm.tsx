@@ -110,8 +110,6 @@ const PizzaForm = ({
     if (type === "subtract" && quantity > 1) setQuantity(quantity - 1);
   };
 
-  console.log({ pizzaData, pricingInformation });
-
   const handleSize = (size: HiringFrontendTakeHomePizzaSize): void => {
     // TODO: Update this to be type safe
 
