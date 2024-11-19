@@ -11,10 +11,9 @@ interface PizzaRowProp {
 const PizzaRow: React.FC<PizzaRowProp> = ({ pizza }) => {
   return (
     <Container>
-      <div style={{ width: "80px", height: "80px", border: "2px solid red" }} />
       <div>
         <Text size="20px" font="poppins" weight="semibold">
-          Pizza Name
+          {pizza.name}
         </Text>
         <Text type="div">Quantity: {pizza.quantity}</Text>
       </div>

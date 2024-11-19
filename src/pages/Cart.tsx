@@ -17,13 +17,11 @@ import { HiringFrontendTakeHomeOrderType } from "../types";
 const Cart = () => {
   const cartContext = useContext(CartContext);
   const { cart, removeFromCart, updateItemQuantity } = cartContext || {};
-
-  console.log({ cart });
   const paymentContext = useContext(PaymentContext);
   const { order, updateOrderDetails } = paymentContext || {};
 
   const subTotal = cart.reduce(
-    (acc, item) => acc + item.quantity * item.totalPrice,
+    (acc, { pizza }) => acc + pizza.quantity * pizza.totalPrice,
     0
   );
 
@@ -53,7 +51,7 @@ const Cart = () => {
                 <PizzaTile
                   key={`pizza_${index}`}
                   index={index}
-                  item={item}
+                  item={item.pizza}
                   removeFromCart={removeFromCart}
                   updateItemQuantity={updateItemQuantity}
                 />

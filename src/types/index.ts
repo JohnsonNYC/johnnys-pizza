@@ -50,11 +50,11 @@ type PizzaTopping = {
 };
 
 export type Pizza = {
+  name: string;
   type: HiringFrontendTakeHomePizzaType;
   size: HiringFrontendTakeHomePizzaSize;
   cheese: HiringFrontendTakeHomePizzaCheese;
   sauce: HiringFrontendTakeHomePizzaSauce;
-  // TODO: Review this and update logic in Pizza Form
   // For specialty pizzas, we only add extra toppings in the toppings array
   // For custom pizzas, we charge for all toppings
   toppings?: PizzaTopping[];
@@ -62,7 +62,6 @@ export type Pizza = {
   toppingExclusions?: HiringFrontendTakeHomePizzaToppings[];
   quantity: number;
   totalPrice: number;
-  name: string;
 };
 
 type OrderItem = {

@@ -6,7 +6,7 @@ import JSConfetti from "js-confetti";
 import { Pizza, HiringFrontendTakeHomeOrderType } from "../types";
 
 interface ConfirmationProps {
-  items: Pizza[];
+  items: { id: string; pizza: Pizza }[];
   deliveryAddress?: {
     street: string;
     city: string;
@@ -52,8 +52,8 @@ const Confirmation: React.FC<ConfirmationProps> = ({
         </Text>
         <Text>Order Number: 123456789</Text>
 
-        {items.map((pizza, index) => (
-          <PizzaRow key={`pizza_${index}`} pizza={pizza} />
+        {items.map(({ id, pizza }) => (
+          <PizzaRow key={`pizza_${id}`} pizza={pizza} />
         ))}
       </div>
 

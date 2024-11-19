@@ -12,13 +12,31 @@ import { Pin } from "lucide-react";
 
 import { CartContext } from "../context/CartContext";
 import { PaymentContext } from "../context/PaymentContext";
-import { HiringFrontendTakeHomeOrderType } from "../types";
+import {
+  HiringFrontendTakeHomeOrderType,
+  HiringFrontendTakeHomeOrderRequest,
+  HiringFrontendTakeHomePaymentMethod,
+} from "../types";
+
+const BASE = import.meta.env.VITE_BASE_URL;
 
 interface OrderSummaryProps {
   cardNumber: string;
+  paymentMethod: HiringFrontendTakeHomePaymentMethod;
 }
 
-const OrderSummary = ({ cardNumber }: OrderSummaryProps) => {
+// export type HiringFrontendTakeHomeOrderRequest = {
+//   //IMPORTANT: unique identifier for this pizza location (and your test)
+//   locationId: string;
+//   items: OrderItem[];
+//   customer: Customer;
+//   totalAmount: number;
+//   paymentMethod: HiringFrontendTakeHomePaymentMethod;
+//   creditCardNumber?: string;
+//   type: HiringFrontendTakeHomeOrderType;
+// };
+
+const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
   const [confirmationModal, setConfirmationModal] = useState(false);
 
   const paymentContext = useContext(PaymentContext);
@@ -27,18 +45,75 @@ const OrderSummary = ({ cardNumber }: OrderSummaryProps) => {
   const cartContext = useContext(CartContext);
   const { cart } = cartContext;
 
-  const subTotal = cart.reduce(
-    (acc, item) => acc + item.quantity * item.totalPrice,
-    0
-  );
-
-  const submitPizzaOrder = () => {
-    setConfirmationModal(true);
-  };
+  const subTotal = cart.reduce((acc, item) => {
+    const { pizza } = item;
+    return acc + pizza.quantity * pizza.totalPrice;
+  }, 0);
 
   const estimatedTax = subTotal * 0.08875;
   const tipTotal = (order && subTotal * order.tip * 0.01) || 0;
   const orderTotal = subTotal + estimatedTax + tipTotal;
+
+  const submitPizzaOrder = async () => {
+    const orderRequest: HiringFrontendTakeHomeOrderRequest = {
+      locationId: "j-kow",
+      items: cart,
+      customer: {
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || "",
+        email: user?.email || "",
+        phoneNumber: user?.phoneNumber || "",
+      },
+      totalAmount: orderTotal,
+      creditCardNumber: cardNumber,
+      paymentMethod: paymentMethod,
+      type: order?.method as HiringFrontendTakeHomeOrderType,
+    };
+
+    if (order?.method === "delivery") {
+      orderRequest.customer.deliveryAddress = {
+        street: user?.deliveryAddress?.street || "",
+        city: user?.deliveryAddress?.city || "",
+        state: user?.deliveryAddress?.state || "",
+        zipCode: user?.deliveryAddress?.zipCode || "",
+      };
+    }
+
+    try {
+      const response = await fetch(`${BASE}/pizza`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderRequest),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Success:", data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    setConfirmationModal(true);
+  };
+
+  const isSubmitable = Boolean(
+    user?.firstName.length &&
+      user?.lastName.length &&
+      user?.phoneNumber.length &&
+      user?.email.length &&
+      (paymentMethod === "cash" ||
+        (paymentMethod === "credit_card" && cardNumber.length)) &&
+      (order?.method == "pickup" ||
+        (user?.deliveryAddress?.street.length &&
+          user?.deliveryAddress?.city.length &&
+          user?.deliveryAddress?.state.length &&
+          user?.deliveryAddress?.zipCode.length))
+  );
 
   return (
     <Container>
@@ -56,8 +131,8 @@ const OrderSummary = ({ cardNumber }: OrderSummaryProps) => {
       ) : null}
 
       <Dropdown title={`Order Summary (${cart.length})`}>
-        {cart.map((pizza, index) => (
-          <PizzaRow key={`pizza_${index}`} pizza={pizza} />
+        {cart.map(({ id, pizza }) => (
+          <PizzaRow key={`pizza_${id}`} pizza={pizza} />
         ))}
       </Dropdown>
 
@@ -82,7 +157,7 @@ const OrderSummary = ({ cardNumber }: OrderSummaryProps) => {
         </Text>
       </ItemizedContainer>
 
-      <Button onClick={submitPizzaOrder}>
+      <Button onClick={submitPizzaOrder} disabled={isSubmitable}>
         <Text color="white" font="poppins" size="20px" weight="bold">
           Place Order ${orderTotal.toFixed(2)}
         </Text>

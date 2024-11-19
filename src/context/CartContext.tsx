@@ -2,7 +2,7 @@ import React, { createContext, useState, ReactNode } from "react";
 import { Pizza } from "../types"; // Adjust the import path as needed
 
 interface CartContextType {
-  cart: Pizza[];
+  cart: { id: string; pizza: Pizza }[];
   addToCart: (pizza: Pizza) => void;
   removeFromCart: (index: number) => void;
   updateItemQuantity: (index: number, quantity: number) => void;
@@ -21,10 +21,10 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [cart, setCart] = useState<Pizza[]>([]);
+  const [cart, setCart] = useState<{ id: string; pizza: Pizza }[]>([]);
 
   const addToCart = (pizza: Pizza) => {
-    setCart((prevCart) => [...prevCart, pizza]);
+    setCart((prevCart) => [...prevCart, { id: `${Date.now()}`, pizza }]);
   };
 
   const removeFromCart = (index: number) => {

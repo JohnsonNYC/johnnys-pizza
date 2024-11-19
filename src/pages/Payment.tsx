@@ -31,7 +31,7 @@ const Payment = () => {
           cvv={cvv}
           setCvv={setCvv}
         />
-        <OrderSummary cardNumber={cardNumber} />
+        <OrderSummary cardNumber={cardNumber} paymentMethod={paymentMethod} />
       </Main>
       <Footer />
     </>

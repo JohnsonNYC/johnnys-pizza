@@ -4,10 +4,15 @@ import styled from "styled-components";
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, onClick }) => {
-  return <AddToCartButton onClick={onClick}>{children}</AddToCartButton>;
+const Button: React.FC<ButtonProps> = ({ children, onClick, ...rest }) => {
+  return (
+    <AddToCartButton onClick={onClick} {...rest}>
+      {children}
+    </AddToCartButton>
+  );
 };
 
 export default Button;
