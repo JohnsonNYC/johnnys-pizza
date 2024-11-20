@@ -1,6 +1,6 @@
 import { HiringFrontendTakeHomeOrderStatus } from "../types";
 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_KEY;
 
 export const handleUpdateStatus = async (
   status: HiringFrontendTakeHomeOrderStatus,

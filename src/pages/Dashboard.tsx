@@ -10,7 +10,7 @@ import { Pencil } from "lucide-react";
 import { HiringFrontendTakeHomeOrderResponse } from "../types";
 import { formatDate } from "date-fns";
 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_KEY;
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

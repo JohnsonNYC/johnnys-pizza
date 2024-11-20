@@ -8,8 +8,6 @@ import {
 } from "../types";
 import { handleUpdateStatus } from "../services/updateOrder";
 
-// const BASE = import.meta.env.VITE_BASE_URL;
-
 interface UpdateOrderFormProp {
   order: HiringFrontendTakeHomeOrderResponse | null;
 }

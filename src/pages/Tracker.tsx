@@ -10,7 +10,7 @@ import {
 } from "../types";
 import { handleUpdateStatus } from "../services/updateOrder";
 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_KEY;
 
 const Tracker = () => {
   const [orderNumberInput, setOrderNumberInput] = useState<string>("");

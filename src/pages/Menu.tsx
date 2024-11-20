@@ -14,7 +14,7 @@ import { SpecialtyPizza } from "../types";
 
 import { GetPizzaPricingResponse } from "../types/api";
 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_KEY;
 
 const Menu = () => {
   const menuDataContext = useContext(MenuDataContext);

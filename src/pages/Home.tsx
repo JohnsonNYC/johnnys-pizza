@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Text from "../components/Text";
 import Button from "../components/Button";
 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_KEY;
 console.log({ BASE });
 
 const Home = () => {
