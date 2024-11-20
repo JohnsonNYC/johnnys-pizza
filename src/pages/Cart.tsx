@@ -17,6 +17,7 @@ import { HiringFrontendTakeHomeOrderType } from "../types";
 const Cart = () => {
   const cartContext = useContext(CartContext);
   const { cart, removeFromCart, updateItemQuantity } = cartContext || {};
+
   const paymentContext = useContext(PaymentContext);
   const { order, updateOrderDetails } = paymentContext || {};
 
@@ -47,11 +48,10 @@ const Cart = () => {
               <Text font="gothic" size="40px">
                 Your Cart
               </Text>
-              {cart.map((item, index) => (
+              {cart.map((item) => (
                 <PizzaTile
-                  key={`pizza_${index}`}
-                  index={index}
-                  item={item.pizza}
+                  key={`pizza_${item.id}`}
+                  item={item}
                   removeFromCart={removeFromCart}
                   updateItemQuantity={updateItemQuantity}
                 />
@@ -63,94 +63,61 @@ const Cart = () => {
                 HOW TO GET IT
               </Text>
               <ButtonContainer>
-                <SelectionPill
-                  active={isPickUp}
-                  option={HiringFrontendTakeHomeOrderType.Pickup}
-                  onClick={() =>
-                    handleOrderMethod(HiringFrontendTakeHomeOrderType.Pickup)
-                  }
-                >
-                  <Text color={isPickUp ? "white" : "black"}>Pick Up</Text>
-                </SelectionPill>
-
-                <SelectionPill
-                  active={!isPickUp}
-                  option={HiringFrontendTakeHomeOrderType.Delivery}
-                  onClick={() =>
-                    handleOrderMethod(HiringFrontendTakeHomeOrderType.Delivery)
-                  }
-                >
-                  <Text color={isPickUp ? "black" : "white"}>Delivery</Text>
-                </SelectionPill>
+                {Object.values(HiringFrontendTakeHomeOrderType).map(
+                  (method) => (
+                    <SelectionPill
+                      key={method}
+                      active={
+                        isPickUp ===
+                        (method === HiringFrontendTakeHomeOrderType.Pickup)
+                      }
+                      option={method}
+                      onClick={() => handleOrderMethod(method)}
+                    >
+                      <Text
+                        color={
+                          isPickUp ===
+                          (method === HiringFrontendTakeHomeOrderType.Pickup)
+                            ? "white"
+                            : "black"
+                        }
+                      >
+                        {method === HiringFrontendTakeHomeOrderType.Pickup
+                          ? "Pick Up"
+                          : "Delivery"}
+                      </Text>
+                    </SelectionPill>
+                  )
+                )}
               </ButtonContainer>
 
               <Text>Add A Tip</Text>
               <ButtonContainer>
-                <TipContainer
-                  $isActive={order?.tip === 15}
-                  onClick={() =>
-                    updateOrderDetails && updateOrderDetails({ tip: 15 })
-                  }
-                >
-                  <Text
-                    size="24px"
-                    weight="bold"
-                    color={order?.tip === 15 ? "white" : "black"}
+                {[15, 20, 25].map((tip) => (
+                  <TipContainer
+                    key={tip}
+                    $isActive={order?.tip === tip}
+                    onClick={() =>
+                      updateOrderDetails &&
+                      updateOrderDetails({ tip: tip as 15 | 20 | 25 })
+                    }
                   >
-                    15%
-                  </Text>
-                  <Text
-                    size="16px"
-                    weight="medium"
-                    color={order?.tip === 15 ? "white" : "black"}
-                  >
-                    ${(subTotal * 0.15).toFixed(2)}
-                  </Text>
-                </TipContainer>
-
-                <TipContainer
-                  $isActive={order?.tip === 20}
-                  onClick={() =>
-                    updateOrderDetails && updateOrderDetails({ tip: 20 })
-                  }
-                >
-                  <Text
-                    size="24px"
-                    weight="bold"
-                    color={order?.tip === 20 ? "white" : "black"}
-                  >
-                    20%
-                  </Text>
-                  <Text
-                    size="16px"
-                    weight="medium"
-                    color={order?.tip === 20 ? "white" : "black"}
-                  >
-                    $5.70
-                  </Text>
-                </TipContainer>
-
-                <TipContainer
-                  $isActive={order?.tip === 25}
-                  onClick={() =>
-                    updateOrderDetails && updateOrderDetails({ tip: 25 })
-                  }
-                >
-                  <Text
-                    size="24px"
-                    weight="bold"
-                    color={order?.tip === 25 ? "white" : "black"}
-                  >
-                    25%
-                  </Text>
-                  <Text
-                    size="16px"
-                    weight="medium"
-                    color={order?.tip === 25 ? "white" : "black"}
-                  >
-                    $5.70
-                  </Text>
-                </TipContainer>
+                    <Text
+                      size="24px"
+                      weight="bold"
+                      color={order?.tip === tip ? "white" : "black"}
+                    >
+                      {tip}%
+                    </Text>
+                    <Text
+                      size="16px"
+                      weight="medium"
+                      color={order?.tip === tip ? "white" : "black"}
+                    >
+                      ${(subTotal * (tip / 100)).toFixed(2)}
+                    </Text>
+                  </TipContainer>
+                ))}
               </ButtonContainer>
 
               <DueContainer>
@@ -162,7 +129,7 @@ const Cart = () => {
                 <Text size="20px">${estimatedTax.toFixed(2)}</Text>
               </DueContainer>
               <DueContainer>
-                <Text size="20px">Tip (15%)</Text>
+                <Text size="20px">Tip (${order?.tip}%)</Text>
                 <Text size="20px">${tipTotal.toFixed(2)}</Text>
               </DueContainer>
               <DueContainer>

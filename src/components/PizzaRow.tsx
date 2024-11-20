@@ -15,11 +15,34 @@ const PizzaRow: React.FC<PizzaRowProp> = ({ pizza }) => {
         <Text size="20px" font="poppins" weight="semibold">
           {pizza.name}
         </Text>
-        <Text type="div">Quantity: {pizza.quantity}</Text>
+        <div>
+          <Text type="div">Quantity: {pizza.quantity}</Text>
+          <div>
+            {pizza?.toppings?.map((item) => (
+              <Text key={`${item.name}-${item.quantity}`} type="div">
+                {item.name} - {item.quantity}
+              </Text>
+            ))}
+          </div>
+        </div>
       </div>
-      <Text size="16px" font="poppins">
-        ${pizza.totalPrice.toFixed(2)}
-      </Text>
+
+      <div>
+        <Text size="16px" font="poppins" type="div">
+          ${pizza.totalPrice.toFixed(2)}
+        </Text>
+
+        {pizza?.toppingExclusions ? (
+          <>
+            <Text color="red">Exclusions</Text>
+            {pizza.toppingExclusions.map((item) => (
+              <Text key={`${item}`} type="div">
+                {item}
+              </Text>
+            ))}
+          </>
+        ) : null}
+      </div>
     </Container>
   );
 };
@@ -30,11 +53,8 @@ const Container = styled.div`
   background: #d9d9d9;
   width: 100%;
   display: flex;
+  justify-content: space-between;
   gap: 10px;
   padding: 0.5rem 1rem;
   box-sizing: border-box;
-
-  & > span:last-of-type {
-    margin-left: auto;
-  }
 `;

@@ -116,7 +116,7 @@ const Dashboard = () => {
             onClose={() => setSelectedOrder(null)}
             wrapperId="modal-root"
           >
-            <UpdateOrderForm order={selectedOrder} />
+            <UpdateOrderForm order={selectedOrder} fetchOrders={fetchOrders} />
           </Modal>
         </main>
       </main>

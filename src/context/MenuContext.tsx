@@ -1,4 +1,3 @@
-// MenuDataContext.js
 import { createContext, useState } from "react";
 import { SpecialtyPizza } from "../types";
 import { ReactNode } from "react";

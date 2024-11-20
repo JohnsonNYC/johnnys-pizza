@@ -21,7 +21,6 @@ import {
 
 import { GetPizzaPricingResponse } from "../types/api";
 
-// SEEDED DATA
 import { meats, veggies } from "../constantsTBD/constants";
 
 import useToppingExclusions from "../utils/pizzaFormHooks";
@@ -111,8 +110,6 @@ const PizzaForm = ({
   };
 
   const handleSize = (size: HiringFrontendTakeHomePizzaSize): void => {
-    // TODO: Update this to be type safe
-
     setSize(size);
 
     if (pizzaData) setPrice(pizzaData.price[size]);
@@ -158,8 +155,6 @@ const PizzaForm = ({
         }
       }
     }
-
-    // TODO Add logic for the Specialty Pizza
   };
 
   const handleMeat = (
@@ -197,9 +192,6 @@ const PizzaForm = ({
     }
 
     setSelectedMeats(copyMeats);
-
-    // If custom all topping are charged
-    // If specialy - if removing add and part of specialy ingredients track as exlcuded item
   };
 
   const handleVeggies = (
@@ -294,14 +286,11 @@ const PizzaForm = ({
   // ---- Hooks ----
   useToppingExclusions(
     pizzaData,
+    cheese,
     selectedMeats,
     selectedVeggies,
     setToppingExclusions
   );
-
-  // useEffect(() => {
-  //   updatePriceByToppingSelection();
-  // }, [selectedMeats, selectedVeggies]);
 
   useEffect(() => {
     prefillPizzaData(pizzaData);

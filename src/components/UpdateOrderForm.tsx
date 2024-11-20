@@ -10,8 +10,12 @@ import { handleUpdateStatus } from "../services/updateOrder";
 
 interface UpdateOrderFormProp {
   order: HiringFrontendTakeHomeOrderResponse | null;
+  fetchOrders: () => void;
 }
-const UpdateOrderForm: React.FC<UpdateOrderFormProp> = ({ order }) => {
+const UpdateOrderForm: React.FC<UpdateOrderFormProp> = ({
+  order,
+  fetchOrders,
+}) => {
   const [currentOrderItem, setCurrentOrderItem] =
     useState<HiringFrontendTakeHomeOrderResponse | null>(null);
 
@@ -24,7 +28,10 @@ const UpdateOrderForm: React.FC<UpdateOrderFormProp> = ({ order }) => {
   ) => {
     if (!currentOrderItem || status == currentOrderItem.status) return;
     const order = await handleUpdateStatus(status, orderId);
-    if (order) setCurrentOrderItem(order);
+    if (order) {
+      fetchOrders();
+      setCurrentOrderItem(order);
+    }
   };
 
   const { street, city, state, zipCode } = customer?.deliveryAddress || {};

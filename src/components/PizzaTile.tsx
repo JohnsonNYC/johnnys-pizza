@@ -5,19 +5,17 @@ import { Pizza } from "../types";
 import { Trash2 } from "lucide-react";
 
 interface PizzaItemProp {
-  index: number;
-  item: Pizza;
-  removeFromCart: (arg: number) => void;
-  updateItemQuantity: (index: number, quantity: number) => void;
+  item: { id: string; pizza: Pizza };
+  removeFromCart: (uniqueId: string) => void;
+  updateItemQuantity: (uniqueId: string, quantity: number) => void;
 }
 
 const PizzaTile = ({
-  index,
   item,
   removeFromCart,
   updateItemQuantity,
 }: PizzaItemProp) => {
-  const { totalPrice, quantity } = item;
+  const { name, totalPrice, quantity } = item.pizza;
 
   const handleQuantity = (type: string) => {
     let newQuantity: number = quantity;
@@ -28,14 +26,14 @@ const PizzaTile = ({
       newQuantity--;
     }
 
-    updateItemQuantity(index, newQuantity);
+    updateItemQuantity(item.id, newQuantity);
   };
 
   return (
     <PizzaItemContainer>
       <div>
         <Text color="32px" weight="bold" size="24px">
-          {item.name}
+          {name}
         </Text>
         <Text size="14px">${totalPrice.toFixed(2)}</Text>
 
@@ -51,7 +49,7 @@ const PizzaTile = ({
       </div>
       <div>
         <Text weight="bold">${(totalPrice * quantity).toFixed(2)}</Text>
-        <Trash2 onClick={() => removeFromCart(index)} color="#FF0000" />
+        <Trash2 onClick={() => removeFromCart(item.id)} color="#FF0000" />
       </div>
     </PizzaItemContainer>
   );

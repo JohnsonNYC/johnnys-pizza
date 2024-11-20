@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo, useContext } from "react";
+import styled from "styled-components";
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Text from "../components/Text";
@@ -9,12 +11,10 @@ import PizzaForm from "../components/PizzaForm";
 import SelectionPill from "../components/SelectionPill";
 import { MenuDataContext } from "../context/MenuContext";
 
-import styled from "styled-components";
 import { SpecialtyPizza } from "../types";
-
 import { GetPizzaPricingResponse } from "../types/api";
 
-const BASE = import.meta.env.VITE_KEY;
+import { getSpecialtyPizzas, getSpecialtyPricing } from "../services/pizzas";
 
 const Menu = () => {
   const menuDataContext = useContext(MenuDataContext);
@@ -25,7 +25,6 @@ const Menu = () => {
   const [selectedPizza, setSelectedPizza] = useState<SpecialtyPizza | null>(
     null
   );
-
   const [pricingInformation, setPricingInformation] =
     useState<GetPizzaPricingResponse>();
 
@@ -51,35 +50,16 @@ const Menu = () => {
     setIsModalOpen(true);
   };
 
-  const getSpecialtyPizzas = async () => {
-    const url = BASE + "/specialty-pizzas";
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.specialtyPizzas) setMenuData(data.specialtyPizzas);
-    } catch (error) {
-      console.error("Error fetching specialty pizzas:", error);
-    }
-  };
-
-  const getSpecialtyPricing = async () => {
-    const url = BASE + "/pizza-pricing";
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      setPricingInformation(data);
-    } catch (error) {
-      console.error("Error fetching specialty pizzas:", error);
-    }
-  };
-
   useEffect(() => {
     if (menuData.length === 0) {
-      getSpecialtyPizzas();
-      getSpecialtyPricing();
+      getSpecialtyPizzas().then((pizzas) => {
+        setMenuData(pizzas);
+      });
     }
+
+    getSpecialtyPricing().then((pricing) => {
+      setPricingInformation(pricing);
+    });
   }, []);
 
   return (

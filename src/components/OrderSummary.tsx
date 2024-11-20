@@ -123,7 +123,7 @@ const OrderSummary = ({ cardNumber, paymentMethod }: OrderSummaryProps) => {
 
           <Text type="div" size="20px">
             <Pin />
-            {"123 Hipster Ave, Brooklyn, NY, 12345"}
+            {"123 Fettucini Ave, Brooklyn, NY, 12345"}
           </Text>
         </PickUpLocation>
       ) : null}

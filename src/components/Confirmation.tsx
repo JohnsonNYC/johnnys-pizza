@@ -44,8 +44,6 @@ const Confirmation: React.FC<ConfirmationProps> = ({
 
   if (!orderConfirmationData) return null;
 
-  console.log({ orderConfirmationData });
-
   return (
     <Container>
       <div>

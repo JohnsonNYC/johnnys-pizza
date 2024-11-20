@@ -6,8 +6,6 @@ export const handleUpdateStatus = async (
   status: HiringFrontendTakeHomeOrderStatus,
   orderId: string
 ) => {
-  // if (!currentOrderItem || status == currentOrderItem.status) return;
-
   try {
     const response = await fetch(`${BASE}/pizza/status`, {
       method: "PUT",
@@ -21,7 +19,6 @@ export const handleUpdateStatus = async (
 
     const data = await response.json();
     return data.order;
-    // setCurrentOrderItem(data.order);
   } catch (error) {
     console.log("HTTP ERROR: ", error);
   }

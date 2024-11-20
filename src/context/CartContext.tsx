@@ -1,11 +1,11 @@
 import React, { createContext, useState, ReactNode } from "react";
-import { Pizza } from "../types"; // Adjust the import path as needed
+import { Pizza } from "../types";
 
 interface CartContextType {
   cart: { id: string; pizza: Pizza }[];
   addToCart: (pizza: Pizza) => void;
-  removeFromCart: (index: number) => void;
-  updateItemQuantity: (index: number, quantity: number) => void;
+  removeFromCart: (uniqueId: string) => void;
+  updateItemQuantity: (uniqueId: string, quantity: number) => void;
 }
 
 const defaultCartContext: CartContextType = {
@@ -28,14 +28,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setCart((prevCart) => [...prevCart, { id: `${Date.now()}`, pizza }]);
   };
 
-  const removeFromCart = (index: number) => {
-    setCart((prevCart) => prevCart.filter((_, i) => i !== index));
+  const removeFromCart = (uniqueId: string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== uniqueId));
   };
 
-  const updateItemQuantity = (index: number, quantity: number) => {
+  const updateItemQuantity = (uniqueId: string, quantity: number) => {
     setCart((prevCart) =>
-      prevCart.map(({ id, pizza }, i) => {
-        return i === index
+      prevCart.map(({ id, pizza }) => {
+        return id === uniqueId
           ? { id, pizza: { ...pizza, quantity } }
           : { id, pizza };
       })

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  HiringFrontendTakeHomePizzaCheese,
   HiringFrontendTakeHomePizzaToppings,
   HiringFrontendTakeHomeToppingQuantity,
   SpecialtyPizza,
@@ -7,6 +8,7 @@ import {
 
 const useToppingExclusions = (
   pizzaData: SpecialtyPizza | null,
+  cheese: HiringFrontendTakeHomePizzaCheese,
   selectedMeats: Array<{
     name: HiringFrontendTakeHomePizzaToppings;
     quantity: HiringFrontendTakeHomeToppingQuantity;

@@ -2,10 +2,7 @@ import React, { useContext } from "react";
 import Text from "./Text";
 import styled from "styled-components";
 import { PaymentContext } from "../context/PaymentContext";
-import {
-  HiringFrontendTakeHomePaymentMethod,
-  // HiringFrontendTakeHomeOrderRequest,
-} from "../types";
+import { HiringFrontendTakeHomePaymentMethod } from "../types";
 
 interface CustomerDetailsProps {
   paymentMethod: HiringFrontendTakeHomePaymentMethod;
