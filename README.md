@@ -63,3 +63,13 @@ You're encouraged to take this project in a direction of your choice while meeti
 ## Notes For the Team
 
 - Thanks for this fun assessment and the ability to go in any direction so I tried to go all out in the design
+- Some few things I would do better include
+
+1. Better Error Handlings within my forms
+   - Currently, the "Place Order" button in /payments is just disabled if there is nothing inside the inputs to collect customer details.
+2. Better validations withing my forms
+   - As of writing this, I have not included basics tests like regex for email, phone number, etc..
+3. Updating the logic for extra toppings. As of now adding toppings will work appropraitey for custom and specialty.
+   Removing items from a specialty pizza will decrease the price by however much an item by quantity costs (which doesn't feel expected);
+4. If you add any specialty pizzas with extra cheese, the order summary will show it as an excluded topping. This is due to some missing logic inside of pizzaFormHooks.tsx
+5. Lastly, I'll be working on some of these past the submission date so please ignore a point if they have already been handled! Thanks, Team!
