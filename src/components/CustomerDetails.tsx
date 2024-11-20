@@ -1,4 +1,6 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
+import { motion } from "motion/react";
+
 import Text from "./Text";
 import styled from "styled-components";
 import { PaymentContext } from "../context/PaymentContext";
@@ -28,6 +30,8 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
   const paymentContext = useContext(PaymentContext);
   const { order, user, updateUserDetails } = paymentContext || {};
 
+  const [error, setError] = useState<string | null>(null);
+
   const updateUser = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     if (!updateUserDetails) return;
     const value = e.target.value;
@@ -53,6 +57,25 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
     updateUserDetails({ [key]: value });
   };
 
+  const validateInput = (
+    type: "phone" | "email",
+    input: string | undefined
+  ) => {
+    if (!input) return;
+    if (type === "phone") {
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(input))
+        setError("Please Enter a valid Phone Number");
+    } else if (type === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(input)) setError("Please Enter a valid email");
+    }
+
+    setTimeout(() => {
+      setError(null);
+    }, 3000);
+  };
+
   return (
     <Container>
       <Text font="gothic" size="40px">
@@ -66,11 +89,13 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
         placeholder="Phone Number"
         value={user?.phoneNumber}
         onChange={(e) => updateUser(e, "phoneNumber")}
+        onBlur={() => validateInput("phone", user?.phoneNumber)}
       />
       <InputContainer
         placeholder="Email Address for Receipt"
         value={user?.email}
         onChange={(e) => updateUser(e, "email")}
+        onBlur={() => validateInput("email", user?.email)}
       />
 
       <HalfWidthContainer>
@@ -184,12 +209,30 @@ const CustomerDetails: React.FC<CustomerDetailsProps> = ({
           </HalfWidthContainer>
         </>
       ) : null}
+
+      {error ? (
+        <Toast
+          initial={{ x: -300 }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 100 }}
+        >
+          <Text color="white" size="20px">
+            {error}
+          </Text>{" "}
+        </Toast>
+      ) : null}
     </Container>
   );
 };
 
 export default CustomerDetails;
 
+const Toast = styled(motion.div)`
+  position: absolute;
+  background: red;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;

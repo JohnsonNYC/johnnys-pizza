@@ -286,7 +286,6 @@ const PizzaForm = ({
   // ---- Hooks ----
   useToppingExclusions(
     pizzaData,
-    cheese,
     selectedMeats,
     selectedVeggies,
     setToppingExclusions
