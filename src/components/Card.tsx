@@ -5,14 +5,13 @@ import styled from "styled-components";
 
 interface CardProps {
   data: SpecialtyPizza;
-  handleClick: (arg0: string) => void;
 }
 
-const Card = ({ data, handleClick }: CardProps) => {
+const Card = ({ data }: CardProps) => {
   const { id, name, description, price } = data;
 
   return (
-    <Container onClick={() => handleClick(id)}>
+    <Container data-id={id}>
       <Text font="gothic" size="20px">
         {name || "Build Your Own"}
       </Text>

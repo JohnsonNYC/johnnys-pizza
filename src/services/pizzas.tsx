@@ -6,9 +6,10 @@ export const getSpecialtyPizzas = async () => {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    return data.specialtyPizzas;
+    if (data?.specialtyPizzas?.length) return data.specialtyPizzas;
+    else throw new Error("ERROR");
   } catch (error) {
-    console.error("Error fetching specialty pizzas:", error);
+    return error;
   }
 };
 

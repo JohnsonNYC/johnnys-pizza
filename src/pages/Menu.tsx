@@ -20,6 +20,9 @@ const Menu = () => {
   const menuDataContext = useContext(MenuDataContext);
   const { menuData, setMenuData } = menuDataContext;
 
+  const [menuLookUp, setMenuLookUp] = useState<{
+    [key: string]: SpecialtyPizza;
+  }>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [filterBy, setFilterBy] = useState<string>("all");
   const [selectedPizza, setSelectedPizza] = useState<SpecialtyPizza | null>(
@@ -47,13 +50,39 @@ const Menu = () => {
       const foundPizza = menuData.find((el) => el.id == pizzaId);
       if (foundPizza) setSelectedPizza(foundPizza);
     }
-    setIsModalOpen(true);
+    // setIsModalOpen(true);
   };
+
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as Element;
+    const el = target.closest("[data-id]");
+
+    if (!el) return;
+    const pizzaId = el.getAttribute("data-id");
+    if (!pizzaId) return;
+
+    const foundPizza = menuLookUp[pizzaId];
+    setSelectedPizza(foundPizza);
+  };
+
+  useEffect(() => {
+    if (selectedPizza) setIsModalOpen(true);
+    else setIsModalOpen(false);
+  }, [selectedPizza]);
 
   useEffect(() => {
     if (menuData.length === 0) {
       getSpecialtyPizzas().then((pizzas) => {
-        setMenuData(pizzas);
+        if (pizzas.length) {
+          const pizzaMapStore: { [key: string]: SpecialtyPizza } = {};
+
+          pizzas.forEach((pizza: SpecialtyPizza) => {
+            pizzaMapStore[pizza.id] = pizza;
+          });
+
+          setMenuData(pizzas);
+          setMenuLookUp(pizzaMapStore);
+        } else console.log(pizzas);
       });
     }
 
@@ -93,25 +122,21 @@ const Menu = () => {
           )}
         </TabsContainer>
 
-        <Grid>
+        <Grid onClick={(e) => handleCardClick(e)}>
           {SPECIALTY_PIZZA.map((data) => (
-            <Card
-              key={`specialty-pizza-${data.id}`}
-              data={data}
-              handleClick={openCard}
-            />
+            <Card key={`specialty-pizza-${data.id}`} data={data} />
           ))}
         </Grid>
 
         <Modal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(!isModalOpen)}
+          onClose={() => setSelectedPizza(null)}
           wrapperId="modal-root"
         >
           <PizzaForm
             pizzaData={selectedPizza}
             pricingInformation={pricingInformation}
-            closeModal={() => setIsModalOpen(false)}
+            closeModal={() => setSelectedPizza(null)}
           />
         </Modal>
       </Main>

@@ -120,8 +120,25 @@ const PizzaForm = ({
     setSauce(sauce);
   };
 
-  const handleCheese = (cheese: HiringFrontendTakeHomePizzaCheese): void => {
-    setCheese(cheese);
+  const handleCheese = (newCheese: HiringFrontendTakeHomePizzaCheese): void => {
+    if (!toppingsPricingStore) return;
+
+    const currCheese = cheese === "normal" ? "regular" : cheese;
+    const newCheeseFormatted = newCheese === "normal" ? "regular" : newCheese;
+
+    if (newCheeseFormatted === currCheese) return;
+
+    const cheesePrices = toppingsPricingStore["extra_cheese"];
+    const currCheesePrice =
+      currCheese === "none" ? 0 : cheesePrices[currCheese];
+    const newCheesePrice =
+      newCheeseFormatted === "none" ? 0 : cheesePrices[newCheeseFormatted];
+
+    if (currCheesePrice !== newCheesePrice) {
+      setPrice((prevPrice) => prevPrice - currCheesePrice + newCheesePrice);
+    }
+
+    setCheese(newCheese);
   };
 
   const updatePriceByToppingSelection = (
@@ -130,29 +147,23 @@ const PizzaForm = ({
     quantity: HiringFrontendTakeHomeToppingQuantity,
     currQuantity?: HiringFrontendTakeHomeToppingQuantity
   ) => {
-    if (type === "add" && toppingsPricingStore) {
-      const toppingPrice = toppingsPricingStore[topping];
-      if (toppingPrice && typeof toppingPrice === "object") {
-        setPrice((prevPrice) => prevPrice + toppingPrice[quantity]);
-      }
-    } else if (type === "subtract" && toppingsPricingStore) {
-      const toppingPrice = toppingsPricingStore[topping];
-      if (toppingPrice && typeof toppingPrice === "object") {
-        setPrice((prevPrice) => prevPrice - toppingPrice[quantity]);
-      }
-    } else if (type === "update" && toppingsPricingStore && currQuantity) {
-      const toppingPrice = toppingsPricingStore[topping];
-      if (toppingPrice && typeof toppingPrice === "object") {
-        const currentTopping =
-          selectedMeats.find((meat) => meat.name === topping) ||
-          selectedVeggies.find((veg) => veg.name === topping);
+    if (!toppingsPricingStore) return;
+    const toppingPrice = toppingsPricingStore[topping];
 
-        if (currentTopping) {
-          setPrice(
-            (prevPrice) =>
-              prevPrice - toppingPrice[currQuantity] + toppingPrice[quantity]
-          );
-        }
+    if (type === "add") {
+      setPrice((prevPrice) => prevPrice + toppingPrice[quantity]);
+    } else if (type === "subtract") {
+      setPrice((prevPrice) => prevPrice - toppingPrice[quantity]);
+    } else if (type === "update" && currQuantity) {
+      const currentTopping =
+        selectedMeats.find((meat) => meat.name === topping) ||
+        selectedVeggies.find((veg) => veg.name === topping);
+
+      if (currentTopping) {
+        setPrice(
+          (prevPrice) =>
+            prevPrice - toppingPrice[currQuantity] + toppingPrice[quantity]
+        );
       }
     }
   };
@@ -241,6 +252,7 @@ const PizzaForm = ({
     }
 
     if (description) setDescription(description);
+    setCheese(HiringFrontendTakeHomePizzaCheese.Normal);
 
     setType(HiringFrontendTakeHomePizzaType.Specialty);
 
