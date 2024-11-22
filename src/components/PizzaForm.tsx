@@ -123,20 +123,20 @@ const PizzaForm = ({
   const handleCheese = (newCheese: HiringFrontendTakeHomePizzaCheese): void => {
     if (!toppingsPricingStore) return;
 
-    const currCheese = cheese === "normal" ? "regular" : cheese;
-    const newCheeseFormatted = newCheese === "normal" ? "regular" : newCheese;
+    // const currCheese = cheese === "normal" ? "regular" : cheese;
+    // const newCheeseFormatted = newCheese === "normal" ? "regular" : newCheese;
 
-    if (newCheeseFormatted === currCheese) return;
+    // if (newCheeseFormatted === currCheese) return;
 
-    const cheesePrices = toppingsPricingStore["extra_cheese"];
-    const currCheesePrice =
-      currCheese === "none" ? 0 : cheesePrices[currCheese];
-    const newCheesePrice =
-      newCheeseFormatted === "none" ? 0 : cheesePrices[newCheeseFormatted];
+    // const cheesePrices = toppingsPricingStore["extra_cheese"];
+    // const currCheesePrice =
+    //   currCheese === "none" ? 0 : cheesePrices[currCheese];
+    // const newCheesePrice =
+    //   newCheeseFormatted === "none" ? 0 : cheesePrices[newCheeseFormatted];
 
-    if (currCheesePrice !== newCheesePrice) {
-      setPrice((prevPrice) => prevPrice - currCheesePrice + newCheesePrice);
-    }
+    // if (currCheesePrice !== newCheesePrice) {
+    //   setPrice((prevPrice) => prevPrice - currCheesePrice + newCheesePrice);
+    // }
 
     setCheese(newCheese);
   };
